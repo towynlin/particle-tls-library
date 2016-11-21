@@ -3,10 +3,20 @@
 static volatile char currentRandomHexString[1024];
 
 TLS tls;
-int16_t tlsInitError;
+
+void logFailure(const char *whichCall, int16_t error) {
+	if (error != 0) {
+		String msg = String("TLS ") + String(whichCall);
+		msg += String(" failed with error ") + String(error);
+		Serial.println(msg);
+		Particle.publish("tls-fail", msg, 60, PRIVATE);
+	}
+}
 
 int updateRandomHexString(String _) {
-	tls.connect("www.random.org", 443);
+	int16_t error = tls.connect("www.random.org", "443");
+	logFailure("connect", error);
+
 	tls.write("GET /cgi-bin/randbyte HTTP/1.1\r\n"
 	          "Host: www.random.org\r\n\r\n");
 	int charsReadOrError = tls.read(currentRandomHexString, 1024);
@@ -15,21 +25,13 @@ int updateRandomHexString(String _) {
 	return charsReadOrError;
 }
 
-void logInitFailure() {
-	Serial.print("TLS init failed with error ");
-	Serial.println(tlsInitError);
-	Particle.publish("tls-init-fail", String(tlsInitError), 60, PRIVATE);
-}
-
 void setup() {
 	Serial.begin();
 	Particle.variable(currentRandomHexString);
 	Particle.function("update-rand", updateRandomHexString);
 
-	tlsInitError = tls.init();
-	if (tlsInitError != 0) {
-		logInitFailure();
-	}
+	int16_t error = tls.init();
+	logFailure("init", error);
 }
 
 void loop() {
