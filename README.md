@@ -51,7 +51,7 @@ You'll probably call this function from `loop()` or from a `Particle.function()`
 char currentRandomHexString[1024];
 
 int updateRandomHexString() {
-	tls.connect("www.random.org", 443);
+	tls.connect("www.random.org", "443");
 	tls.write("GET /cgi-bin/randbyte HTTP/1.1\r\n"
 	          "Host: www.random.org\r\n\r\n");
 	int charsReadOrError = tls.read(currentRandomHexString, 1024);
@@ -70,6 +70,12 @@ error code returned from either `mbedtls_ctr_drbg_seed()`
 [MBEDTLS_ERR_CTR_DRBG_ENTROPY_SOURCE_FAILED](https://tls.mbed.org/api/ctr__drbg_8h.html#a15d1931ea5d133062cd93a3374a5bcf0))
 or, more likely,
 [`mbedtls_x509_crt_parse()`](https://tls.mbed.org/api/group__x509__module.html#ga033567483649030f7f859db4f4cb7e14).
+
+There are 4 possible return values from `connect()`:
+- 0: Success
+- -82: Unknown host
+- -68: Connection failed
+- -66: Socket failed
 
 
 ## License
