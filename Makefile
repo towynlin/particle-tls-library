@@ -5,7 +5,7 @@ BUILD_DIR ?= ./build
 SRC_DIR ?= ./src
 TEST_DIR ?= ./test
 
-SRCS := $(shell find $(SRC_DIR) -name *.cpp)
+SRCS := $(shell find $(SRC_DIR) -name *.cpp -or -name *.c)
 OBJS := $(SRCS:%=$(BUILD_DIR)/%.o)
 DEPS := $(OBJS:.o=.d)
 
@@ -27,6 +27,10 @@ $(BUILD_DIR)/$(TARGET_LIB): $(OBJS)
 $(BUILD_DIR)/%.cpp.o: %.cpp
 	$(MKDIR_P) $(dir $@)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
+
+$(BUILD_DIR)/%.c.o: %.c
+	$(MKDIR_P) $(dir $@)
+	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
 
 $(BUILD_DIR)/$(TEST_DIR)/$(TEST_RUNNER): $(TEST_OBJS) $(OBJS)
 	$(CXX) $(TEST_OBJS) $(OBJS) -o $@ $(LDFLAGS) $(LDLIBS)
