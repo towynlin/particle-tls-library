@@ -31,7 +31,7 @@ In `setup()` call `tls.init()` and check the return value.
 
 ```
 void setup() {
-	int16_t error = tls.init();
+	int error = tls.init();
 	if (error < 0) {
 		// Uh oh! Failure! The library won't work!
 	} else if (error > 0) {

@@ -4,7 +4,7 @@ static volatile char currentRandomHexString[1024];
 
 TLS tls;
 
-void logFailure(const char *whichCall, int16_t error) {
+void logFailure(const char *whichCall, int error) {
 	if (error != 0) {
 		String msg = String("TLS ") + String(whichCall);
 		msg += String(" failed with error ") + String(error);
@@ -14,7 +14,7 @@ void logFailure(const char *whichCall, int16_t error) {
 }
 
 int updateRandomHexString(String _) {
-	int16_t error = tls.connect("www.random.org", "443");
+	int error = tls.connect("www.random.org", "443");
 	logFailure("connect", error);
 
 	tls.write("GET /cgi-bin/randbyte HTTP/1.1\r\n"
@@ -30,7 +30,7 @@ void setup() {
 	Particle.variable(currentRandomHexString);
 	Particle.function("update-rand", updateRandomHexString);
 
-	int16_t error = tls.init();
+	int error = tls.init();
 	logFailure("init", error);
 }
 

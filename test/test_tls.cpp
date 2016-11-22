@@ -4,7 +4,7 @@
 SCENARIO( "Writing and reading over TLS" ) {
 	GIVEN( "I have initialized TLS" ) {
 		TLS tls;
-		int16_t error = tls.init();
+		int error = tls.init();
 
 		REQUIRE( error == 0 );
 
