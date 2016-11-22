@@ -1,7 +1,7 @@
 #include "catch.hpp"
 #include "tls.h"
 
-SCENARIO( "Successful connection" ) {
+SCENARIO( "Writing and reading over TLS" ) {
 	GIVEN( "I have initialized TLS" ) {
 		TLS tls;
 		int16_t error = tls.init();
@@ -13,14 +13,23 @@ SCENARIO( "Successful connection" ) {
 
 			THEN( "the return value is zero" ) {
 				REQUIRE( error == 0 );
+
+				AND_WHEN( "I call write with a valid HTTP request" ) {
+					error = tls.write("GET /cgi-bin/randbyte HTTP/1.1\r\n"
+					                  "Host: www.random.org\r\n\r\n");
+
+					THEN( "the socket has data to read" ) {
+						REQUIRE( error == MBEDTLS_ERR_SSL_WANT_READ );
+					}
+				}
 			}
 		}
 
 		WHEN( "I call connect with a bad host" ) {
 			error = tls.connect("gazorpa.zorp", "443");
 
-			THEN( "the return value is -82" ) {
-				REQUIRE( error == -82 );
+			THEN( "the return value is MBEDTLS_ERR_NET_UNKNOWN_HOST" ) {
+				REQUIRE( error == MBEDTLS_ERR_NET_UNKNOWN_HOST );
 			}
 		}
 	}

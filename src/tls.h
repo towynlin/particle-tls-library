@@ -9,7 +9,7 @@ class TLS
 public:
 	int16_t init();
 	int16_t connect(const char *host, const char *port);
-	void write();
+	int16_t write(const char *buf);
 	int read(unsigned char *buf, size_t len);
 	void close();
 
