@@ -38,7 +38,12 @@ SCENARIO( "Writing and reading over TLS" ) {
 			error = tls.connect("www.random.org", "443");
 
 			THEN( "the return value is zero" ) {
-				CHECK( error == 0 );
+				if( error == MBEDTLS_ERR_NET_UNKNOWN_HOST ) {
+					printf("  !!  These tests require internet access.\n");
+					printf("  !!  It looks like you may not have it.\n");
+					printf("  !!  The -82 error below is \"unknown host\".\n");
+				}
+				REQUIRE( error == 0 );
 
 				AND_WHEN( "I call write with a valid HTTP request" ) {
 					const char *buf =
