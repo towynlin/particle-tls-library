@@ -56,6 +56,22 @@ SCENARIO( "Writing and reading over TLS" ) {
 
 					THEN( "56 bytes are written" ) {
 						REQUIRE( error == 56 );
+
+						AND_WHEN( "I call read" ) {
+							unsigned char recv_buf[20];
+							len = sizeof( recv_buf );
+							error = tls.read( recv_buf, len);
+
+							THEN( "the response looks like HTTP" ) {
+								// There was more to read, so we filled the buffer
+								REQUIRE( error == len );
+
+								// First line of response was HTTP
+								int cmp = strncmp( (const char *)recv_buf,
+								                   "HTTP/1.1 200 OK\r\n", 17 );
+								REQUIRE( cmp == 0 );
+							}
+						}
 					}
 				}
 			}

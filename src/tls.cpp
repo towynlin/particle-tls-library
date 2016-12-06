@@ -88,18 +88,48 @@ int TLS::write( const unsigned char *buf, size_t len )
 {
 	const size_t original_len = len;
 	int ret = mbedtls_ssl_write( &ssl, buf, len );
-	while( ret > 0 && ret < len )
+	while( (ret >= 0 && ret < len) || ret == MBEDTLS_ERR_SSL_WANT_WRITE )
 	{
 		buf += ret;
 		len -= ret;
-		while( ret == 0 || ret == MBEDTLS_ERR_SSL_WANT_READ ||
-		       ret == MBEDTLS_ERR_SSL_WANT_WRITE )
+		while( ret == 0 || ret == MBEDTLS_ERR_SSL_WANT_WRITE )
 		{
 			ret = mbedtls_ssl_write( &ssl, buf, len );
 		}
 	}
 
-	if( ret < 0 )
+	if( ret < 0 && ret != MBEDTLS_ERR_SSL_WANT_READ )
+	{
+		int ret2 = mbedtls_ssl_session_reset( &ssl );
+		if( ret2 < 0 )
+		{
+			// conundrum, we have 2 errors now, could return either
+			return ret2;
+		}
+		return ret;
+	}
+	else
+	{
+		return original_len;
+	}
+}
+
+int TLS::read( unsigned char *buf, size_t len )
+{
+	memset( buf, 0, len );
+	const size_t original_len = len;
+	int ret = mbedtls_ssl_read( &ssl, buf, len );
+	while( (ret > 0 && ret < len) || ret == MBEDTLS_ERR_SSL_WANT_READ )
+	{
+		buf += ret;
+		len -= ret;
+		while( ret == MBEDTLS_ERR_SSL_WANT_READ )
+		{
+			ret = mbedtls_ssl_read( &ssl, buf, len );
+		}
+	}
+
+	if( ret < 0 && ret != MBEDTLS_ERR_SSL_WANT_WRITE )
 	{
 		int ret2 = mbedtls_ssl_session_reset( &ssl );
 		if( ret2 < 0 )
