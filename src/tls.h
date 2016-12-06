@@ -12,7 +12,7 @@ public:
 	int connect( const char *host, const char *port );
 	int write( const unsigned char *buf, size_t len );
 	int read( unsigned char *buf, size_t len );
-	void close();
+	int close();
 
 private:
 	mbedtls_net_context server_fd;

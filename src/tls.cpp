@@ -144,3 +144,8 @@ int TLS::read( unsigned char *buf, size_t len )
 		return original_len;
 	}
 }
+
+int TLS::close()
+{
+	return mbedtls_ssl_close_notify( &ssl );
+}

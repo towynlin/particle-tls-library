@@ -70,6 +70,14 @@ SCENARIO( "Writing and reading over TLS" ) {
 								int cmp = strncmp( (const char *)recv_buf,
 								                   "HTTP/1.1 200 OK\r\n", 17 );
 								REQUIRE( cmp == 0 );
+
+								AND_WHEN( "I call close" ) {
+									error = tls.close();
+
+									THEN( "the connection closes successfully" ) {
+										REQUIRE( error == 0 );
+									}
+								}
 							}
 						}
 					}
