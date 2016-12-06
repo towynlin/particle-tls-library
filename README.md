@@ -62,6 +62,22 @@ int updateRandomHexString() {
 ```
 
 
+## Root Certificate
+
+You will need to initialize the library with a root certificate. You can mimic
+the format of the examples here, including the PEM file in the source code as a
+long string. Alternatively you can save a little flash and RAM by including the
+DER formatted binary certificate in your code. Some handy terminal commands:
+
+```
+# converts PEM to DER
+openssl x509 -outform der -in certificate.pem -out certificate.der
+
+# outputs a copy-pastable C array
+xxd -i certificate.der
+```
+
+
 ## Troubleshooting
 
 The return value from `init()`, when non-zero, is an mbed TLS
