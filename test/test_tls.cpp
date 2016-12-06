@@ -30,17 +30,15 @@ const char root_pem[] = DIGICERT_HIGH_ASSURANCE_EV_ROOT_CA;
 SCENARIO( "Writing and reading over TLS" ) {
 	GIVEN( "I have initialized TLS" ) {
 		TLS tls;
-		int error = tls.init(root_pem);
+		int error = tls.init(root_pem, sizeof(root_pem));
 
-		// TODO FIX, getting MBEDTLS_ERR_X509_INVALID_FORMAT
-		//REQUIRE( error == 0 );
+		CHECK( error == 0 );
 
 		WHEN( "I call connect with a valid host and port" ) {
 			error = tls.connect("www.random.org", "443");
 
 			THEN( "the return value is zero" ) {
-				// TODO FIX, getting MBEDTLS_X509_BADCERT_NOT_TRUSTED
-				//REQUIRE( error == 0 );
+				CHECK( error == 0 );
 
 				AND_WHEN( "I call write with a valid HTTP request" ) {
 					const char *buf =

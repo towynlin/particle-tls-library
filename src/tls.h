@@ -8,7 +8,7 @@
 class TLS
 {
 public:
-	int init( const char *root_pem );
+	int init( const char *root_crt, const size_t root_crt_len );
 	int connect( const char *host, const char *port );
 	int write( const unsigned char *buf, size_t len );
 	int read( unsigned char *buf, size_t len );

@@ -1,7 +1,7 @@
 #include "tls.h"
 #include <cstring>
 
-int TLS::init( const char *root_pem )
+int TLS::init( const char *root_crt, const size_t root_crt_len )
 {
 	int error;
 	mbedtls_net_init( &server_fd );
@@ -20,8 +20,8 @@ int TLS::init( const char *root_pem )
 	}
 
 	return mbedtls_x509_crt_parse( &cacert,
-	                               (const unsigned char *) root_pem,
-	                               sizeof( root_pem ) );
+	                               (const unsigned char *) root_crt,
+	                               root_crt_len );
 }
 
 int TLS::connect( const char *host, const char *port )
