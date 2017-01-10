@@ -35,7 +35,7 @@ SCENARIO( "Writing and reading over TLS" ) {
 		CHECK( error == 0 );
 
 		WHEN( "I call connect with a valid host and port" ) {
-			error = tls.connect("www.random.org", "443");
+			error = tls.connect("www.random.org", 443);
 
 			THEN( "the return value is zero" ) {
 				if( error == MBEDTLS_ERR_NET_UNKNOWN_HOST ) {
@@ -86,7 +86,7 @@ SCENARIO( "Writing and reading over TLS" ) {
 		}
 
 		WHEN( "I call connect with a bad host" ) {
-			error = tls.connect("gazorpa.zorp", "443");
+			error = tls.connect("gazorpa.zorp", 443);
 
 			THEN( "the return value is MBEDTLS_ERR_NET_UNKNOWN_HOST" ) {
 				REQUIRE( error == MBEDTLS_ERR_NET_UNKNOWN_HOST );
