@@ -3,6 +3,18 @@
 #include <cstring>
 #include <cstddef>
 
+/* debug code start */
+#include "spark_wiring_usbserial.h"
+
+static void my_debug( void *ctx, int level,
+                      const char *file, int line,
+                      const char *str )
+{
+	Serial.printlnf( "%s:%04d: %s", file, line, str );
+}
+/* debug code end, other than the call to mbedtls_ssl_conf_dbg below */
+
+
 int TLS::init( const char *root_crt, const size_t root_crt_len )
 {
 	int error;
@@ -54,6 +66,7 @@ int TLS::init( const char *root_crt, const size_t root_crt_len )
 	mbedtls_ssl_conf_authmode( &conf, MBEDTLS_SSL_VERIFY_REQUIRED );
 	mbedtls_ssl_conf_ca_chain( &conf, &cacert, nullptr );
 	mbedtls_ssl_conf_rng( &conf, mbedtls_ctr_drbg_random, &ctr_drbg );
+	mbedtls_ssl_conf_dbg( &conf, my_debug, nullptr );
 
 	return mbedtls_ssl_setup( &ssl, &conf );
 }
