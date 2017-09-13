@@ -5,8 +5,9 @@
 
 /* debug code start */
 #include "spark_wiring_usbserial.h"
+#include "mbedtls/debug.h"
 
-static void my_debug( void *ctx, int level,
+static void docdocdoc_debug( void *ctx, int level,
                       const char *file, int line,
                       const char *str )
 {
@@ -66,7 +67,11 @@ int TLS::init( const char *root_crt, const size_t root_crt_len )
 	mbedtls_ssl_conf_authmode( &conf, MBEDTLS_SSL_VERIFY_REQUIRED );
 	mbedtls_ssl_conf_ca_chain( &conf, &cacert, nullptr );
 	mbedtls_ssl_conf_rng( &conf, mbedtls_ctr_drbg_random, &ctr_drbg );
-	mbedtls_ssl_conf_dbg( &conf, my_debug, nullptr );
+
+	/* debug start */
+	mbedtls_ssl_conf_dbg( &conf, docdocdoc_debug, nullptr );
+	mbedtls_debug_set_threshold(4);
+	/* debug end */
 
 	return mbedtls_ssl_setup( &ssl, &conf );
 }
